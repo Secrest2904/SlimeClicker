@@ -43,5 +43,6 @@ SlimeClicker/
 
 ```bash
 pip install Tkinter
+```
 
 ### Made by Adam Secrest
