@@ -13,27 +13,12 @@ A Python clicker game inspired by *cookie clickers* and *slime farming*! Click y
 - Supports `.png` and `.gif` slime sprites
 - Upgrade icons and multipliers shown clearly
 - Clean UI built with `tkinter`
-- Easy-to-extend with cosmetics, sounds, or save/load support
 
 ---
-
-## 📁 Folder Structure
-SlimeClicker/
-├── main.py
-├── README.md
-└── sprites/
-├── slimes/
-│ ├── clear.png
-│ ├── water.png
-│ ├── fire.png
-│ └── space.gif
-└── upgrades/
-├── grass_patch.png
-├── well.png
-└── planet.png
-
+## TO-DO
+- Add Slimes for tiers 5-7
+- Add slime cosmetics
 ---
-
 ## 🧰 Requirements
 
 - Python 3.8+
