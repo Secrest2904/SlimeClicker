@@ -6,36 +6,73 @@ import os
 # Constants
 SLIME_TIERS = ["clear", "water", "rock", "fire", "grass", "ice", "magma", "space"]
 UPGRADES = ["grass_patch", "well", "rock_pile", "bonfire", "forest", "glacier", "volcano", "planet"]
-UPGRADE_COSTS = {
-    "grass_patch": 16,
-    "well": 128,
-    "rock_pile": 1024,
-    "bonfire": 8192,
-    "forest": 65536,
-    "glacier": 524288,
-    "volcano": 4194304,
-    "planet": 33554432
-}
-BASE_GPS = {
-    "grass_patch": 1,
-    "well": 8,
-    "rock_pile": 64,
-    "bonfire": 512,
-    "forest": 4096,
-    "glacier": 32768,
-    "volcano": 262144,
-    "planet": 2097152
-}
-PRESTIGE_COSTS = {
-    0: 4000,
-    1: 16000,
-    2: 64000,
-    3: 256000,
-    4: 1024000,
-    5: 4096000,
-    6: 16384000,
-    7: 65536000
-}
+Demonstration_mode = True
+if (Demonstration_mode == False):
+    UPGRADE_COSTS = {
+        "grass_patch": 16,
+        "well": 128,
+        "rock_pile": 1024,
+        "bonfire": 8192,
+        "forest": 65536,
+        "glacier": 524288,
+        "volcano": 4194304,
+        "planet": 33554432
+    }
+    BASE_GPS = {
+        "grass_patch": 1,
+        "well": 8,
+        "rock_pile": 64,
+        "bonfire": 512,
+        "forest": 4096,
+        "glacier": 32768,
+        "volcano": 262144,
+        "planet": 2097152
+    }
+
+    PRESTIGE_COSTS = {
+        0: 4000,
+        1: 16000,
+        2: 64000,
+        3: 256000,
+        4: 1024000,
+        5: 4096000,
+        6: 16384000,
+        7: 65536000
+    } 
+else:
+    UPGRADE_COSTS = {
+        "grass_patch": 8,
+        "well": 128,
+        "rock_pile": 1024,
+        "bonfire": 8192,
+        "forest": 65536,
+        "glacier": 524288,
+        "volcano": 4194304,
+        "planet": 33554432
+    }
+    BASE_GPS = {
+        "grass_patch": 1,
+        "well": 8,
+        "rock_pile": 64,
+        "bonfire": 512,
+        "forest": 4096,
+        "glacier": 32768,
+        "volcano": 262144,
+        "planet": 2097152
+    }
+
+    PRESTIGE_COSTS = {
+        0: 1,
+        1: 1,
+        2: 1,
+        3: 1,
+        4: 1,
+        5: 1,
+        6: 1,
+        7: 1
+    } 
+    
+
 color = '#7055a1'
 
 class SlimeClickerGame:
@@ -59,6 +96,14 @@ class SlimeClickerGame:
         self.setup_ui()
         self.update_ui()
         self.auto_generate_gelatin()
+        base_path = os.path.dirname(os.path.abspath(__file__))
+        gelatin_path = os.path.join(base_path, "sprites", "gelatin.png")
+        if os.path.exists(gelatin_path):
+            img = Image.open(gelatin_path).convert("RGBA").resize((18, 18))
+            self.gelatin_icon = ImageTk.PhotoImage(img)
+        else:
+            self.gelatin_icon = None
+
 
     def calculate_gps(self):
         total = 0
@@ -70,6 +115,24 @@ class SlimeClickerGame:
                 tier_bonus = self.slime_tier - i + 2 if self.slime_tier - i + 1 >= 0 else 1
             total += count * base * tier_bonus
         return total
+    
+    def fade_out_icon(self, x, y, duration=300, steps=5):
+        if not self.gelatin_base_image:
+            return
+
+        step_delay = duration // steps
+        for i in range(steps):
+            alpha = int(255 * (1 - i / steps))
+            faded = self.gelatin_base_image.copy()
+            faded.putalpha(alpha)
+            img = ImageTk.PhotoImage(faded)
+            
+            def show(img=img):  # Default arg to hold reference
+                label = tk.Label(self.root, image=img, bg=self.root["bg"], borderwidth=0, highlightthickness=0)
+                label.place(x=x - 12, y=y - 12)
+                self.root.after(step_delay, label.destroy)
+
+            self.root.after(i * step_delay, show)
 
     def auto_generate_gelatin(self):
         gps = self.calculate_gps()
@@ -164,6 +227,13 @@ class SlimeClickerGame:
     def on_slime_click(self, event=None):
         self.gelatin += 1
         self.update_ui()
+        if self.gelatin_icon and event:
+            label = tk.Label(self.root, image=self.gelatin_icon, bg='white', borderwidth=0, highlightthickness=0)
+            label.place(x=event.x_root - self.root.winfo_rootx() - 17,
+                        y=event.y_root - self.root.winfo_rooty() - 17)
+            self.root.after(300, label.destroy)
+
+
 
     def buy_upgrade(self, name):
         cost = int(UPGRADE_COSTS[name] * (1.05 ** self.upgrades[name]))
