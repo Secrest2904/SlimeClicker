@@ -16,7 +16,7 @@ A Python clicker game inspired by *cookie clickers* and *slime farming*! Click y
 
 ---
 ## TO-DO
-- Add Slimes for tiers 5-7
+- Make click-gelatin transparent
 - Add slime cosmetics
 ---
 ## 🧰 Requirements
